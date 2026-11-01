@@ -1,0 +1,13 @@
+# Despliegue en Render (https://render.com) — experiencia tipo Vercel para este proyecto PHP.
+# Cada "git push" a main publica una nueva versión automáticamente.
+services:
+  - type: web
+    name: excellab
+    runtime: docker
+    region: virginia   # misma región que la base de Neon (us-east-1): consultas con latencia mínima
+    plan: free
+    healthCheckPath: /login
+    envVars:
+      # Se pega en el panel de Render (Secret File o Environment Variable). Nunca va en el repositorio.
+      - key: DATABASE_URL
+        sync: false

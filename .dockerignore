@@ -1,0 +1,9 @@
+.git
+.gitignore
+storage/logs/*
+storage/uploads/*
+.env
+.env.*
+Thumbs.db
+desktop.ini
+.DS_Store
