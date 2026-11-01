@@ -1,0 +1,13 @@
+# Registros y subidas de usuarios (no se versionan)
+storage/logs/*
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# Nunca subir credenciales de base de datos
+.env
+.env.*
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
