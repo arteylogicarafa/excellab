@@ -3,7 +3,7 @@
 Plataforma educativa para aprender Microsoft Excel (unidad curricular **Paquetes Informáticos**).
 Lecciones, laboratorio de ejercicios, retos, casos prácticos, evaluaciones, logros y panel docente. Todo en español.
 
-**Tecnología:** PHP 8.1+ nativo (PDO), MySQL/MariaDB, HTML5, CSS3, JavaScript, Bootstrap 5.3, Bootstrap Icons y Chart.js (todas las librerías van incluidas en `public/assets/vendor`, sin depender de internet).
+**Tecnología:** PHP 8.1+ nativo (PDO con PostgreSQL/Neon), HTML5, CSS3, JavaScript, Bootstrap 5.3, Bootstrap Icons y Chart.js (todas las librerías van incluidas en `public/assets/vendor`, sin depender de internet).
 
 - Instalación en XAMPP: [docs/INSTALACION.md](docs/INSTALACION.md)
 - Manual de uso y funcionamiento: [docs/MANUAL.md](docs/MANUAL.md)
