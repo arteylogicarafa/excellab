@@ -4,6 +4,24 @@ $dbUrl = getenv('DATABASE_URL');
 if ($dbUrl === false || $dbUrl === '') {
     $dbUrl = $_ENV['DATABASE_URL'] ?? $_SERVER['DATABASE_URL'] ?? '';
 }
+if ($dbUrl === '') {
+    // Hosting compartido sin variables de entorno: se lee de un archivo .env en la raíz.
+    // El .env nunca se sube al repositorio (.gitignore) ni lleva claves en ningún archivo versionado.
+    $envFile = dirname(__DIR__) . '/.env';
+    if (is_file($envFile)) {
+        foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+            $line = trim($line);
+            if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) {
+                continue;
+            }
+            [$k, $v] = explode('=', $line, 2);
+            if (trim($k) === 'DATABASE_URL') {
+                $dbUrl = trim($v, " \t\"'");
+                break;
+            }
+        }
+    }
+}
 return [
     'app_name' => 'ExcelLab',
     'debug'    => true,              // En producción: false

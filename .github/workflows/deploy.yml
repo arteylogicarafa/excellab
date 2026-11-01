@@ -1,0 +1,51 @@
+name: Desplegar a alwaysdata
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Sin secretos configurados todavía: el paso se omite (no falla el push).
+      - name: Comprobar credenciales
+        id: ck
+        env:
+          AD_HOST: ${{ secrets.ALWAYSDATA_HOST }}
+        run: |
+          if [ -n "$AD_HOST" ]; then
+            echo "ok=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=0" >> "$GITHUB_OUTPUT"
+            echo "Sin secretos ALWAYSDATA_*: despliegue omitido."
+          fi
+
+      - name: Instalar sshpass
+        if: steps.ck.outputs.ok == '1'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+
+      # Sube el proyecto por SSH/SFTP. Nunca toca .env (la clave de la base vive solo en el servidor)
+      # ni borra archivos de storage/uploads y storage/logs (subidas y registros del servidor).
+      - name: Subir archivos
+        if: steps.ck.outputs.ok == '1'
+        env:
+          SSHPASS: ${{ secrets.ALWAYSDATA_PASSWORD }}
+          AD_HOST: ${{ secrets.ALWAYSDATA_HOST }}
+          AD_USER: ${{ secrets.ALWAYSDATA_USER }}
+          AD_PATH: ${{ secrets.ALWAYSDATA_PATH }}
+          AD_PORT: ${{ secrets.ALWAYSDATA_PORT }}
+        run: |
+          PORT="${AD_PORT:-22}"
+          sshpass -e rsync -avz --timeout=60 \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '.env' \
+            --exclude '.env.*' \
+            --exclude 'storage/logs/*' \
+            --exclude 'storage/uploads/*' \
+            -e "ssh -p $PORT -o StrictHostKeyChecking=accept-new" \
+            ./ "${AD_USER}@${AD_HOST}:${AD_PATH}/"
